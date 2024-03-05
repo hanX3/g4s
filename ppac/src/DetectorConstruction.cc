@@ -42,6 +42,10 @@ DetectorConstruction::DetectorConstruction()
   al_face_thickness = AlFaceThickness;
   al_face_pos_z = AlFacePosZ;
 
+  rings = RingNumber;
+  sectors = SectorNumber;
+  target2cathode = Target2Cathode;
+
   ppac_log = nullptr;
   mylar_face_log = nullptr;
   al_face_log = nullptr;
@@ -146,11 +150,44 @@ void DetectorConstruction::GetAlFaceLog(G4String af)
 }
 
 //
+void DetectorConstruction::BuildCathodeArray()
+{
+  G4cout<<" --->: Build Cthode array, begin" << G4endl;
+
+  // cathode array
+  G4Tubs *cathode_array_solid = new G4Tubs("cathode_array_solid", 0., 0.5*m, 0.5*m, 0., twopi);
+  G4LogicalVolume *cathode_array_log = new G4LogicalVolume(cathode_array_solid, mat_vaccum, "cathode_array_log", nullptr, nullptr, nullptr);
+  new G4PVPlacement(nullptr, G4ThreeVector(), cathode_array_log, "cathode_array_phys", world_log, false, 0, check_overlaps);
+
+  //
+  v_cathode_array.clear();
+ 
+  for(int i=0;i<rings;i++){
+    for(int j=0;j<sectors;j++){
+      v_cathode_array.push_back(new CathodePixel(cathode_array_log));
+    }
+  }
+ 
+  std::vector<CathodePixel*>::iterator it = v_cathode_array.begin();
+  for(int i=0;i<rings;i++){
+    for(int j=0;j<sectors;j++){
+      (*it)->SetRingId(i);
+      (*it)->SetSectorId(j);
+      (*it)->SetId(180*i+j);
+      (*it)->Construct();
+      (*it)->Place(G4ThreeVector(0., 0., ppac_pos_z+ppac_thickness/2.+1.*mm));
+      (*it)->SetName();
+      it++;
+    }
+  }
+}
+
+//
 G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
 {
   // define world
   G4Box *world_solid = new G4Box("World", 0.5*WorldSizeX, 0.5*WorldSizeY, 0.5*WorldSizeZ);
-  G4LogicalVolume *world_log = new G4LogicalVolume(world_solid, mat_vaccum, "World");
+  world_log = new G4LogicalVolume(world_solid, mat_vaccum, "World");
   G4VPhysicalVolume *world_phys = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), world_log, "World", 0, false, 0, check_overlaps);
 
   // ppac
@@ -168,6 +205,8 @@ G4VPhysicalVolume* DetectorConstruction::DefineVolumes()
   G4ThreeVector al_face_pos = G4ThreeVector(0, 0, al_face_pos_z);
   new G4PVPlacement(0, al_face_pos, al_face_log, "AlFace", world_log, false, 0, check_overlaps);
 
+  // cathode array
+  BuildCathodeArray();
 
   // Example of User Limits
   // Below is an example of how to set tracking constraints in a given logical volume

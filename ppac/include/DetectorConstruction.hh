@@ -2,6 +2,8 @@
 #define DetectorConstruction_h 1
 
 #include "Constants.hh"
+#include "CathodePixel.hh"
+
 #include "globals.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "tls.hh"
@@ -36,9 +38,14 @@ private:
   void GetMylarFaceLog(G4String mf);
   void GetAlFaceLog(G4String af);
 
+  void BuildCathodeArray();
+
   G4VPhysicalVolume* DefineVolumes();
 
 private:
+  std::vector<CathodePixel*> v_cathode_array;
+
+  //
   G4double ppac_outer_r;
   G4double ppac_inner_r;
   G4double ppac_thickness;
@@ -54,8 +61,14 @@ private:
   G4double al_face_thickness;
   G4double al_face_pos_z;
 
+  //
+  G4int rings;
+  G4int sectors;
+  G4double target2cathode;
+
 private:
   //
+  G4LogicalVolume *world_log;
   G4LogicalVolume *ppac_log;
   G4LogicalVolume *mylar_face_log;
   G4LogicalVolume *al_face_log;

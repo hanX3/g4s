@@ -31,8 +31,9 @@ public:
 
 public:  
   G4VPhysicalVolume *Construct();
-  void SetRingId(G4int i) {ring_id = i;};
-  void SetSectorId(G4int i) {sector_id = i;};
+  void SetRingId(G4int i) { ring_id = i; };
+  void SetSectorId(G4int i) { sector_id = i; };
+  void SetId(G4int i) { id = i; };
   void SetName();
   void Report();
   void Place(G4ThreeVector p);
@@ -57,9 +58,12 @@ private:
   G4LogicalVolume *cathode_pixel_log;
   G4VPhysicalVolume *cathode_pixel_phys;
 
-  // todo
-  G4int ring_id; // 0-24
-  G4int sector_id; // 0-32
+  //
+  G4double target2cathode;
+
+  G4int ring_id; // 0-52
+  G4int sector_id; // 0-179
+  G4int id;
 };
 
 #endif

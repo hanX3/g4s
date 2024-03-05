@@ -34,7 +34,11 @@ constexpr G4double AlFaceInnerR = 10. *mm;
 constexpr G4double AlFaceThickness = 20. *um;
 constexpr G4double AlFacePosZ = (PPACPosZ-PPACThickness/2.-MylarFaceThickness-AlFaceThickness/2.);
 
-
+//
+constexpr G4int RingNumber = 53;
+constexpr G4int SectorNumber = 180;
+constexpr G4double CathodeThickness = 2. *mm;
+constexpr G4double Target2Cathode =  36. *mm;
 
 
 //beam
